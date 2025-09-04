@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -10,7 +11,10 @@ use Illuminate\Support\Facades\Validator;
 class AdminController extends Controller
 {
     public function dashbord() {
-        return view('admin.dashbord');
+
+        $latestContactLead = Contact::latest()->take(3)->get();
+
+        return view('admin.dashbord',['conatctLead' => $latestContactLead]);
     }
 
     public function events() {

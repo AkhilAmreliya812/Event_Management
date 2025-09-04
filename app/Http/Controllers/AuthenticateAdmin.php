@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ForgotPasswordMailer;
+use App\Mail\OtpVerificationMailer;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,9 +15,33 @@ use Illuminate\Support\Str;
 
 class AuthenticateAdmin extends Controller
 {
-    public function login()
+    public function login() { return view('admin.admin_login'); }
+
+    public function getOTP(){ return view('admin.otp_verification'); }
+
+    public function verifyOTP(Request $request)
     {
-        return view('admin.admin_login');
+        $validate = Validator::make($request->all(),['otp' => 'required',]);
+
+        if ($validate->fails()) {
+            return redirect()->back()->withErrors($validate);
+        } else {
+
+            $user = User::where('email', $request->only('email'))->first();
+
+            if(Carbon::parse($user->updated_at)->diffInMinutes(Carbon::now()) > 10) {
+                return redirect()->back()->with('error', 'OTP has been expired');
+            }
+
+            if ($request->otp == $user->verification_code) {
+                User::where('email', $request->email)->update(['email_verified' => 'y']);
+                $credentials = $request->only('email', 'password');
+                if (Auth::attempt(($credentials))) {
+                    return redirect()->route('admin-dashbord');
+                }
+
+            } else { return redirect()->back()->withErrors('otp', 'Invalid OTP'); }
+        }
     }
 
     public function authenticate(Request $request)
@@ -31,8 +56,24 @@ class AuthenticateAdmin extends Controller
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
         } else {
+
+            $user = User::where('email', $request->only('email'))->first();
+
+            if ($user->email_verified == 'n' || $user->email_verified == 'N') {
+
+                $otp = mt_rand(100000, 999999);
+                User::where('email', $request->email)->update(['verification_code' => $otp]);
+                //updtes
+                Mail::to($request->email)->send(new OtpVerificationMailer($user->name, $request->email, $otp));
+
+                $request->session()->put('email', $request->email);
+                $request->session()->put('password', $request->password);
+
+                return redirect()->route('admin-otpForm')->with('success', 'We sent you 6 digit verification code on your email please check your mailbox');
+            }
+
             if (Auth::attempt($credentials)) {
-                $user = User::where('email', $request->only('email'))->first();
+                // $user = User::where('email', $request->only('email'))->first();
 
                 return redirect()->route('admin-dashbord');
             } else {
@@ -41,14 +82,9 @@ class AuthenticateAdmin extends Controller
         }
     }
 
-    public function changePassword()
-    {
-        return view('admin.change_password');
-    }
+    public function changePassword() { return view('admin.change_password'); }
 
-    public function setNewPassword(Request $request)
-    {
-
+    public function setNewPassword(Request $request) {
         $validate = Validator::make($request->all(),
             [
                 'old_password' => 'required',

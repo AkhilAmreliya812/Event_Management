@@ -19,7 +19,7 @@ class LoggedInUser
         if(Auth::check()) {
             return $next($request);
         }
-        return redirect()->route('admin-login')->with('error','Unauthorized Access');
+        return redirect()->route('admin-login');
         
     }
 }
