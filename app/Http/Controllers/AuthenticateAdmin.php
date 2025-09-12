@@ -34,7 +34,7 @@ class AuthenticateAdmin extends Controller
             }
 
             if ($request->otp == $user->verification_code) {
-                User::where('email', $request->email)->update(['email_verified' => 'y']);
+                User::where('email', $request->email)->update(['email_verified' => 'Y','verification_code'=>NULL]);
                 $credentials = $request->only('email', 'password');
                 if (Auth::attempt(($credentials))) {
                     return redirect()->route('admin-dashbord');
@@ -59,25 +59,29 @@ class AuthenticateAdmin extends Controller
 
             $user = User::where('email', $request->only('email'))->first();
 
-            if ($user->email_verified == 'n' || $user->email_verified == 'N') {
+            if($user && Hash::check($credentials['password'],$user->password)) {
+                if ($user->email_verified == 'N') {
 
-                $otp = mt_rand(100000, 999999);
-                User::where('email', $request->email)->update(['verification_code' => $otp]);
-                //updtes
-                Mail::to($request->email)->send(new OtpVerificationMailer($user->name, $request->email, $otp));
-
-                $request->session()->put('email', $request->email);
-                $request->session()->put('password', $request->password);
-
-                return redirect()->route('admin-otpForm')->with('success', 'We sent you 6 digit verification code on your email please check your mailbox');
-            }
-
-            if (Auth::attempt($credentials)) {
-                // $user = User::where('email', $request->only('email'))->first();
-
-                return redirect()->route('admin-dashbord');
+                    $otp = mt_rand(100000, 999999);
+                    User::where('email', $request->email)->update(['verification_code' => $otp]);
+                    //updtes
+                    Mail::to($request->email)->send(new OtpVerificationMailer($user->name, $request->email, $otp));
+    
+                    $request->session()->put('email', $request->email);
+                    $request->session()->put('password', $request->password);
+    
+                    return redirect()->route('admin-otpForm')->with('success', 'We sent you 6 digit verification code on your email please check your mailbox');
+                }
+    
+                if (Auth::attempt($credentials)) {
+                    // $user = User::where('email', $request->only('email'))->first();
+    
+                    return redirect()->route('admin-dashbord');
+                } else {
+                    return redirect()->back()->with('error', 'Invalid Credentials');
+                }
             } else {
-                return redirect()->back()->with('error', 'Invalid Credentials');
+                return redirect()->back()->with('error', 'Invalid ');
             }
         }
     }

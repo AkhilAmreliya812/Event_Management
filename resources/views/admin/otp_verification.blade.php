@@ -12,7 +12,7 @@
             <label for="otp" class="form-label">Enter OTP</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
-                <input type="text" class="form-control" name="otp" id="otp"
+                <input type="password" class="form-control" name="otp" id="otp"
                     placeholder="Enter OTP">
             </div>
             {{-- <div class="text-end mt-2">

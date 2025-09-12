@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -12,17 +13,30 @@ class AdminController extends Controller
 {
     public function dashbord() {
 
-        $latestContactLead = Contact::latest()->take(3)->get();
+        $latestContactLead = Contact::latest()->take(5)->get();
 
         return view('admin.dashbord',['conatctLead' => $latestContactLead]);
     }
 
-    public function events() {
-        return view('admin.events');
+    public function events() { 
+
+        $events = Event::all();
+
+        return view('admin.events',['events' => $events]); 
     }
 
     public function contactLead() {
-        return view('admin.contactLead');
+
+        $data = Contact::all();
+
+        return view('admin.contactLead',['data' => $data]);
+    }
+
+    public function getDescription(Request $request) {
+
+        $description = Contact::where('id',$request->id)->value('description');
+        return $description;
+
     }
 
     public function register() {
@@ -40,7 +54,6 @@ class AdminController extends Controller
     }
 
     public function saveDetails(Request $request) {
-
 
         $validate = Validator::make($request->all(),
             [
