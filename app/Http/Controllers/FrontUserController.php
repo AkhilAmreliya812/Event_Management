@@ -81,7 +81,7 @@ class FrontUserController extends Controller
             return response()->json([
                 'status' => 'error',
                 'errors' => $validator->errors(),
-            ], 422);
+            ]);
         } else {
 
             $is_duplicate = Booking::where('event_id',$request->event_id)->where('email',$request->email)->first();
@@ -106,7 +106,7 @@ class FrontUserController extends Controller
     
                 return response()->json([
                     'status' => 'success',
-                    'success' => 'You have successfully registerd'
+                    'message' => 'You have successfully registerd'
                 ]);
             }  
         }

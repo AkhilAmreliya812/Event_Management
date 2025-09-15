@@ -3,16 +3,22 @@
 @section('title', 'Events Details')
 
 @section('main')
- 
+    <div class="loader-overlay" id="pageLoader">
+        <div class="spinner-grow" style="width: 5rem; height: 5rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
 
     <div class="container my-2">
+
+
         <div class="row mb-3">
             <div class="col-md-6">
                 <h1 class="card-title mb-2">{{ $event->event_title }}</h1>
             </div>
             <div class="col-md-6 mb-2 d-flex justify-content-end">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookEvent">Register
-                    Now</button>
+                <button class="btn btn-primary" id="openForm">Register Now</button>
             </div>
         </div>
         <div>
@@ -56,79 +62,113 @@
                         <h1 class="modal-title fs-5" id="bookEventLable">Register your self</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+
                     <div class="modal-body">
-                        <div class="container mt-4">
-
-                            {{-- <div class="alert alert-success alert-dismissible fade show" role="alert" id="successAlert">
-                                <p id="alertMessage"></p>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
-                            </div> --}}
-
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="errorAlert">
+                        <div class="container">
+                            <div class="alert alert-dismissible fade show" role="alert" id="alertBox">
                                 <span id="alertMessage"></span>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"
                                     aria-label="Close"></button>
                             </div>
-
                         </div>
 
-                        <div class="modal-body">
-                            <form id="registrationForm">
-                                @csrf
-                                <input type="hidden" name="event_id" id="event_id" value="{{ $event->id }}">
-                                <div class="mb-3">
-                                    <label class="form-label">Name</label>
-                                    <input type="text" name="name" id="name" class="form-control">
+                        <form id="registrationForm">
+                            @csrf
+                            <input type="hidden" name="event_id" id="event_id" value="{{ $event->id }}">
+                            <div class="mb-3">
+                                <label class="form-label">Name</label>
+                                <input type="text" name="name" id="name" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" id="email" class="form-control">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Phone</label>
+                                <input type="text" name="phone" id="phone" class="form-control">
+                            </div>
+                            <div class="mb-3 row">
+                                <div class="col-lg-6">
+                                    <button id="registeration" class="btn btn-primary w-100">Save Details</button>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" name="email" id="email" class="form-control">
+                                <div class="col-lg-6">
+                                    <button id="resetData" class="btn btn-danger w-100">Reset</button>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Phone</label>
-                                    <input type="text" name="phone" id="phone" class="form-control">
-                                </div>
-                                <button id="registeration" class="btn btn-primary w-100">Save Details</button>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
+
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#errorAlert').hide();
+            $('#openForm').on('click', function() {
+                $('#alertBox').hide();
+                $("#registrationForm")[0].reset();
+                $('#bookEvent').modal('show');
+                $('.errorMsg').remove();
+            });
             $('#registeration').on('click', function() {
-                $('#errorAlert').hide();
+                $('.errorMsg').remove();
                 event.preventDefault();
                 let dataObj = new FormData($("#registrationForm")[0]);
-                console.log(dataObj);
-
+                $('#pageLoader').show();
+                $('#pageLoader').addClass('d-flex justify-content-center');
                 $.ajax({
                     url: "{{ route('registraionEvent') }}",
                     type: "POST",
                     data: dataObj,
                     contentType: false,
                     processData: false,
-        
                     success: function(response) {
                         if (response.status === 'duplicate') {
+                            $('#alertBox').addClass('alert-danger');
                             $('#alertMessage').text(response.message);
-                            $('#errorAlert').show(200);
+                            $('#alertBox').show(200);
+                            $('#pageLoader').hide();
+                            $('#pageLoader').removeClass('d-flex justify-content-center');
+                            $('#registeration').prop('disabled', false);
+                        } else if (response.status === 'success') {
                             $("#registrationForm")[0].reset();
-                        } else {
-                            $("#registrationForm")[0].reset();
-                            $('#bookEvent').modal('hide');
+                            $('#alertBox').addClass('alert-success');
+                            $('#alertMessage').text(response.message);
+                            $('#alertBox').show(200);
+                            $('#pageLoader').hide();
+                            $('#pageLoader').removeClass('d-flex justify-content-center');
+                        } else if (response.status === 'error') {
+                            if (response.errors.name) {
+                                $("#name").after(
+                                    `<p class="text-danger errorMsg">${response.errors.name}</p>`
+                                    );
+                            }
+                            if (response.errors.email) {
+                                $("#email").after(
+                                    `<p class="text-danger errorMsg">${response.errors.email}</p>`
+                                    );
+                            }
+                            if (response.errors.phone) {
+                                $("#phone").after(
+                                    `<p class="text-danger errorMsg">${response.errors.phone}</p>`
+                                    );
+                            }
+                            $('#pageLoader').hide();
+                            $('#pageLoader').removeClass('d-flex justify-content-center');
                         }
-
-
                     }
                 });
+            });
+
+            $('#resetData').on('click', function() {
+                event.preventDefault();
+                $("#registrationForm")[0].reset();
+                $('#alertBox').hide(200);
+                $('#pageLoader').hide();
+                $('#pageLoader').removeClass('d-flex justify-content-center');
+                $('.errorMsg').remove();
             });
         });
     </script>

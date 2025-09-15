@@ -34,7 +34,7 @@
             </thead>
             <tbody>
                 @foreach ($events as $event)
-                {{-- @dd($event->document); --}}
+                    {{-- @dd($event->document); --}}
                     <tr>
                         <td>{{ $event->event_title }}</td>
                         <td>{{ $event->category }}</td>
@@ -49,22 +49,21 @@
                                 <i class="fa fa-download" aria-hidden="true"></i>
                             </a>
                         </td>
-                        <td>publish
-                            {{-- <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked"
-                                    checked>
-                                <label class="form-check-label" for="flexSwitchCheckChecked">Publish</label>
-                            </div> --}}
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="publishUnpublish">
+                            </div>
                         </td>
                         <td>
                             <a class="btn btn-info" href="{{ route('admin-editEvent', ['id' => $event->id]) }}"><i
                                     class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                             <a class="btn btn-danger" href="{{ route('admin-deleteEvent', ['id' => $event->id]) }}"
-                                onclick="return confirm('You want to delete event ?');"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                                onclick="return confirm('You want to delete event ?');"><i class="fa fa-trash-o"
+                                    aria-hidden="true"></i></a>
                         </td>
                     </tr>
                 @endforeach
-            </tbody>    
+            </tbody>
         </table>
     </div>
 
@@ -89,6 +88,13 @@
         $(document).ready(function() {
 
             $('#events').DataTable();
+
+           $('#publishUnpublish').on('change',function() {
+               
+           });
+
+           
+
 
         });
     </script>
