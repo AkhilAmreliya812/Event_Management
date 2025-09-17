@@ -69,12 +69,18 @@ class FrontUserController extends Controller
         ]);
     }
 
+    public function termsConditions() {
+        return view('user.termsConditions');
+    }
+
     public function registraionEvent(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
             'email' => 'required|email',
             'phone' => 'required|string|max:20',
+            'tearmsconditions' => 'required'
         ]);
 
         if ($validator->fails()) {

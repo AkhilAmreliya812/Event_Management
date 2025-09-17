@@ -6,13 +6,13 @@
 
     <div class="container mt-4">
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" id="successAlert" role="alert">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
         @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" id="errorAlert" role="alert">
                 {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
@@ -51,11 +51,12 @@
                         </td>
                         <td>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="publishUnpublish">
+                                <input class="form-check-input eventStatus" type="checkbox" role="switch"
+                                    id={{ $event->id }} {{ $event->status == 'Y' ? 'checked' : '' }}>
                             </div>
                         </td>
                         <td>
-                            <a class="btn btn-info" href="{{ route('admin-editEvent', ['id' => $event->id]) }}"><i
+                            <a class="btn btn-primary" href="{{ route('admin-editEvent', ['id' => $event->id]) }}"><i
                                     class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
                             <a class="btn btn-danger" href="{{ route('admin-deleteEvent', ['id' => $event->id]) }}"
                                 onclick="return confirm('You want to delete event ?');"><i class="fa fa-trash-o"
@@ -82,21 +83,50 @@
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    `
     <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
     <script>
         $(document).ready(function() {
-
+            // Datatable init.
             $('#events').DataTable();
 
-           $('#publishUnpublish').on('change',function() {
-               
-           });
+            // Publish/Unpublish Event.
+            $('.eventStatus').on('change', function() {
+                $.ajax({
+                    url: '{{ route('admin-eventStatus') }}',
+                    type: 'POST',
+                    data: {
+                        'eventId': $(this).attr('id'),
+                        'status': $(this).is(':checked') ? 'Y' : 'N',
+                        '_token': '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.status == "success") {
+                            $('#events').DataTable();
+                            toastr.success('', response.message, {
+                                timeOut: 3500
+                            })
+                        } else if (response.status == "error") {
+                            toastr.error('', response.message, {
+                                timeOut: 3500
+                            })
+                        }
+                    },
+                });
+            });
+        });
 
-           
+        $("#errorAlert").delay(3000).fadeOut(500, function() {
+            $(this).remove();
+        });
 
-
+        $("#successAlert").delay(3000).fadeOut(100, function() {
+            $(this).remove();
         });
     </script>
+
+
 
 @endsection

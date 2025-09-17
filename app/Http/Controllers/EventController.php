@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -15,16 +16,16 @@ class EventController extends Controller
 
         $data = $request->only('event_title', 'start_date', 'end_date', 'price', 'category', 'event_image', 'document', 'description');
 
-        $validate = Validator::make($data,[
-                'event_title' => 'required|min:3|max:50',
-                'start_date' => 'required',
-                'end_date' => 'required',
-                'price' => 'required',
-                'category' => 'required',
-                'event_image' => 'required',
-                'document' => 'required',
-                'description' => 'required',
-            ]
+        $validate = Validator::make($data, [
+            'event_title' => 'required|min:3|max:50',
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'price' => 'required',
+            'category' => 'required',
+            'event_image' => 'required',
+            'document' => 'required',
+            'description' => 'required',
+        ]
         );
 
         if ($validate->fails()) {
@@ -41,8 +42,48 @@ class EventController extends Controller
             $event->description = $request->description;
             $event->save();
 
-            return redirect()->route('admin-events')->with('success','event added successfully');
+            return redirect()->route('admin-events')->with('success', 'event added successfully');
         }
+
+    }
+
+    public function changeStatus(Request $request)
+    {
+        if(isset($request->eventId) && !empty($request->eventId)) {
+            $event = Event::find($request->eventId);
+            if(!empty($event)) {
+                $event->status = $request->status;
+                $event->save();
+
+                $message = '';
+                if($request->status == 'Y') {
+                    $message = 'Event publish successfully.';
+                } else {
+                    $message = 'Event unpublish successfully.';
+                }
+                return response()->json([
+                    'status' => 'success',
+                    'message' => $message,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Record not found.!',
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong.!',
+            ]);
+        }
+    }
+
+    public function allBookingData()
+    {
+
+        $bookingdata = Booking::all();
+        return view('admin.bookedEvents', ['bookingdata' => $bookingdata]);
 
     }
 
@@ -88,7 +129,6 @@ class EventController extends Controller
         if ($validate->passes()) {
             $event = Event::find($request->id);
 
-            
             $event->event_title = $request->event_title;
             $event->start_date = $request->start_date;
             $event->end_date = $request->end_date;
@@ -99,7 +139,7 @@ class EventController extends Controller
             $event->description = $request->description;
             $event->save();
 
-            return redirect()->route('admin-events')->with('success','event added successfully');
+            return redirect()->route('admin-events')->with('success', 'event added successfully');
 
         } else {
             return redirect()->back()->withErrors($validate)->withInput();
@@ -121,12 +161,11 @@ class EventController extends Controller
     public function downloadDocument($id)
     {
         $event = Event::find($id);
-       
+
         $documentPath = public_path('documents/' . $event->document);
         return response()->download($documentPath, $event->document, [
             'Content-Type' => 'application/pdf',
         ]);
     }
 
-    
 }

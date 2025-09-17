@@ -1,8 +1,9 @@
 @extends('admin.layout.login_register_comman')
 @section('title', 'Login - Event Manager')
 @section('main')
-@section('form-title','Login')
-    <form action="{{ route('admin-authenticate') }}" method="POST">
+@section('form-title', 'Login')
+<div>
+    <form action="{{ route('admin-authenticate') }}" method="POST" id="loginForm">
         @csrf
         <div class="mb-4">
             <label for="email" class="form-label">Email address</label>
@@ -38,5 +39,52 @@
         <p class="text-center mt-3">Don't have an account? <a href={{ route('admin-register') }}
                 class="text-decoration-none text-primary">Sign up</a></p>
     </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script>
+    var $j = jQuery.noConflict();
+    $j(document).ready(function() {
+        $j('#loginForm').validate({
+            errorClass: "error",
+            errorElement: "span",
+            rules: {
+                email: {
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true,
+                    minlength: 6
+                },
+            },
+            messages: {
+                email: {
+                    required: "Please enter email",
+                    email: "Please enter a valid email address"
+                },
+                password: {
+                    required: "Please enter password",
+                    minlength: "Password must be at least 6 characters"
+                },
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+            },
+            errorPlacement: function(error, element) {
+                error.addClass('text-danger d-block mt-1');
+                if (element.parent('.input-group').length) {
+                    error.insertAfter(element.parent());
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+    });
+</script>
 
 @endsection

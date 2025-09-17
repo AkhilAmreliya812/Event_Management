@@ -1,7 +1,7 @@
 @extends('admin.layout.login_register_comman')
-@section('title', 'Reset Password - Event Manager')
+@section('title', 'OTP Verification - Event Manager')
 @section('main')
-@section('form-title','Reset Password')
+@section('form-title','OTP Verification')
     <form action="{{ route('admin-verifyOTP') }}" method="POST">
         @csrf
 
@@ -27,4 +27,11 @@
         </div>
         <p class="text-center mt-3"><a href="{{ route('admin-login') }}" class="text-decoration-none text-primary">Back Login</a></p>
     </form>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $("#errorAlert").delay(3000).fadeOut(500, function () {
+            $(this).remove();
+        });
+    </script>
 @endsection
