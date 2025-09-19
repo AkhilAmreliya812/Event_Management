@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -13,6 +14,7 @@
     <title>@yield('title')</title>
     <link rel="icon" type="image/x-icon" href="http://localhost/event_manager/public/logo/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -38,11 +40,37 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-            display: none; /* Hidden by default */
+            background: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent black background */
+            display: none;
+            /* Hidden by default */
             justify-content: center;
             align-items: center;
-            z-index: 9999; /* Ensure it appears above other content */
+            z-index: 9999;
+            /* Ensure it appears above other content */
+        }
+
+        .hero {
+            background: url('https://via.placeholder.com/1200x400') no-repeat center center/cover;
+            color: rgb(13 202 240);
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .pageContent {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .pageContent h1 {
+            color: #333;
         }
     </style>
 </head>

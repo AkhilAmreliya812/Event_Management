@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>@yield('title')</title>
     {{-- datatable css cdn --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="icon" href="http://localhost/event_manager/public//logo/logo.png" type="image/x-icon">
@@ -18,6 +19,9 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
+
+            
+
         .loginUser {
             width: 50px;
             height: 50px;
@@ -107,12 +111,6 @@
                 Events
             </a>
 
-            <a href="{{ route('admin-bookings') }}"
-                class="d-block py-2 px-2 rounded text-decoration-none 
-          {{ request()->routeIs('admin-bookings') ? 'bg-secondary text-dark fw-bold' : 'text-light hover-bg' }}">
-                Event Subscriptions
-            </a>
-
             <a href="{{ route('admin-contactLead') }}"
                 class="d-block py-2 px-2 rounded text-decoration-none 
               {{ request()->routeIs('admin-contactLead') ? 'bg-secondary text-dark fw-bold' : 'text-light hover-bg' }}">
@@ -129,6 +127,10 @@
     </div>
 
 </body>
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+@yield('script')
 
 </html>

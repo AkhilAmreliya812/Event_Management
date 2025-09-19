@@ -1,10 +1,8 @@
 @extends('user.layout.comman')
-
 @section('title', 'Events')
-
 @section('main')
     <div class="m-1">
-        <h1>Events</h1>
+        <h1 class="text-center">Events</h1>
         <div class="row">
             @foreach ($events as $event)
                 <div class="card m-3" style="width: 18rem;">

@@ -21,50 +21,17 @@
     <a class="btn btn-secondary m-3" href="{{ route('admin-add_event') }}">Add New Event</a>
 
     <div class="m-4">
-        <table class="table align-middle" id="events">
+        <table class="table table-bordered align-middle" id="events">
             <thead>
-                <th>Title</th>
+                <th>Event Title</th>
                 <th>Category</th>
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Event Image</th>
                 <th>Document</th>
                 <th>Publish</th>
-                <th>Actions</th>
+                <th>Action</th>
             </thead>
-            <tbody>
-                @foreach ($events as $event)
-                    {{-- @dd($event->document); --}}
-                    <tr>
-                        <td>{{ $event->event_title }}</td>
-                        <td>{{ $event->category }}</td>
-                        <td>{{ date('d-M-Y', strtotime($event->start_date)) }}</td>
-                        <td>{{ date('d-M-Y', strtotime($event->end_date)) }}</td>
-                        <td class="text-center">
-                            <img src="{{ 'http://localhost/event_manager/public/event_images/' . $event->event_image }}"
-                                alt="" height="50px" width="50px">
-                        </td>
-                        <td class="text-center">
-                            <a href="{{ route('admin-download-document', ['id' => $event->id]) }}">
-                                <i class="fa fa-download" aria-hidden="true"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input eventStatus" type="checkbox" role="switch"
-                                    id={{ $event->id }} {{ $event->status == 'Y' ? 'checked' : '' }}>
-                            </div>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="{{ route('admin-editEvent', ['id' => $event->id]) }}"><i
-                                    class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-                            <a class="btn btn-danger" href="{{ route('admin-deleteEvent', ['id' => $event->id]) }}"
-                                onclick="return confirm('You want to delete event ?');"><i class="fa fa-trash-o"
-                                    aria-hidden="true"></i></a>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
         </table>
     </div>
 
@@ -82,51 +49,107 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
+@endsection
+@section('script')
+<script>
+    $(document).ready(function() {        
+        $('#events').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('admin-events') }}",
+            columns: [{
+                    data: 'event_title',
+                    name: 'event_title',
+                    orderable: true,
+                    searchable: true,
+                    className: 'text-start'
+                },
+                {
+                    data: 'category',
+                    name: 'category',
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-start'
+                },
+                {
+                    data: 'start_date',
+                    name: 'start_date',
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center'
+                },
+                {
+                    data: 'end_date',
+                    name: 'end_date',
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center'
+                },
+                {
+                    data: 'event_image',
+                    name: 'event_image',
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center'
+                },
+                {
+                    data: 'document',
+                    name: 'document',
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center'
+                },
+                {
+                    data: 'status',
+                    name: 'status',
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false,
+                    className: 'text-center'
+                },
+            ]
+        });
 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Datatable init.
-            $('#events').DataTable();
 
-            // Publish/Unpublish Event.
-            $('.eventStatus').on('change', function() {
-                $.ajax({
-                    url: '{{ route('admin-eventStatus') }}',
-                    type: 'POST',
-                    data: {
-                        'eventId': $(this).attr('id'),
-                        'status': $(this).is(':checked') ? 'Y' : 'N',
-                        '_token': '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        if (response.status == "success") {
-                            $('#events').DataTable();
-                            toastr.success('', response.message, {
-                                timeOut: 3500
-                            })
-                        } else if (response.status == "error") {
-                            toastr.error('', response.message, {
-                                timeOut: 3500
-                            })
-                        }
-                    },
-                });
+        //Publish/Unpublish Event.
+        $('body').on('change','.eventStatus', function() {
+
+            $.ajax({
+                url: "{{ route('admin-eventStatus') }}",
+                type: 'POST',
+                data: {
+                    'eventId': $(this).attr('id'),
+                    'status': $(this).is(':checked') ? 'Y' : 'N',
+                    '_token': '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.status == "success") {
+                        $('#events').DataTable();
+                        toastr.success('', response.message, {
+                            timeOut: 3500
+                        })
+                    } else if (response.status == "error") {
+                        toastr.error('', response.message, {
+                            timeOut: 3500
+                        })
+                    }
+                },
             });
         });
+     });
 
-        $("#errorAlert").delay(3000).fadeOut(500, function() {
-            $(this).remove();
-        });
+    $("#errorAlert").delay(3000).fadeOut(500, function() {
+        $(this).remove();
+    });
 
-        $("#successAlert").delay(3000).fadeOut(100, function() {
-            $(this).remove();
-        });
-    </script>
-
-
-
+    $("#successAlert").delay(3000).fadeOut(100, function() {
+        $(this).remove();
+    });
+</script>
 @endsection

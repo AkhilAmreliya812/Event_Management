@@ -8,15 +8,77 @@ use Illuminate\Support\Facades\Validator;
 
 class EventController extends Controller
 {
+
+    // display all events
+    public function events(Request $request)
+    {
+        if (!request()->ajax()) {
+            return view('admin.events');
+        }
+        $events = Event::select('id', 'event_title', 'category', 'start_date', 'end_date', 'event_image', 'document', 'status')->get();
+
+        return datatables()->of($events)
+            ->addColumn('event_title', function ($row) {
+                return $row->event_title;
+            })
+            ->addColumn('category', function ($row) {
+                return $row->category;
+            })
+            ->addColumn('start_date', function ($row) {
+                return $row->start_date;
+            })
+            ->addColumn('end_date', function ($row) {
+                return $row->end_date;
+            })
+            ->addColumn('event_image', function ($row) {
+
+                $image = '';
+                $image .= '<img src="' . asset('event_images/' . $row->event_image) . '"
+                alt="" style="width:50px; height:50px;">';
+
+                return $image;
+            })
+            ->addColumn('document', function ($row) {
+                $document = '';
+                $document .= '<a href="' . route('admin-download-document', ['id' => $row->id]) . '">
+                <i class="fa fa-download" aria-hidden="true"></i>
+            </a>';
+                return $document;
+            })
+            ->addColumn('status', function ($row) {
+                $status = '<div class="form-check form-switch">
+              <input class="form-check-input eventStatus" type="checkbox" role="switch"
+                  id="' . $row->id . '" ' . ($row->status == 'Y' ? 'checked' : '') . '>
+           </div>';
+                return $status;
+            })
+            ->addColumn('action', function ($row) {
+                $actionBtn = '';
+                $actionBtn .= '<div class="text-center text-nowrap">';
+                $actionBtn .= '<a href="' . route('admin-editEvent', ['id' => $row->id]) . '" class="btn btn-link p-0 mx-1" title="Edit" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Edit"> <i class="fa fa-pencil-square-o" aria-hidden="true"></i> </a>';
+
+                $actionBtn .= '<a href="' . route('admin-deleteEvent', ['id' => $row->id]) . '" datatableId="events_datatable" class="deleteRecord btn btn-link text-danger p-0 ms-2" title="Delete">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                            </a>';
+
+                $actionBtn .= '</div">';
+
+                return $actionBtn;
+            })
+            ->rawColumns(['event_title', 'category', 'start_date', 'end_date', 'event_image', 'document', 'status', 'action'])
+            ->addIndexColumn()
+            ->make(true);
+    }
+
     public function addEvent()
-    {return view('admin.add_event');}
+    {
+        return view('admin.add_event');
+    }
 
     public function saveEvent(Request $request)
     {
 
-        $data = $request->only('event_title', 'start_date', 'end_date', 'price', 'category', 'event_image', 'document', 'description');
-
-        $validate = Validator::make($data, [
+        $validate = Validator::make($request->all(), [
             'event_title' => 'required|min:3|max:50',
             'start_date' => 'required',
             'end_date' => 'required',
@@ -41,7 +103,7 @@ class EventController extends Controller
             $event->document = $this->document($request);
             $event->description = $request->description;
             $event->save();
-
+            
             return redirect()->route('admin-events')->with('success', 'event added successfully');
         }
 
@@ -49,14 +111,14 @@ class EventController extends Controller
 
     public function changeStatus(Request $request)
     {
-        if(isset($request->eventId) && !empty($request->eventId)) {
+        if (isset($request->eventId) && !empty($request->eventId)) {
             $event = Event::find($request->eventId);
-            if(!empty($event)) {
+            if (!empty($event)) {
                 $event->status = $request->status;
                 $event->save();
 
                 $message = '';
-                if($request->status == 'Y') {
+                if ($request->status == 'Y') {
                     $message = 'Event publish successfully.';
                 } else {
                     $message = 'Event unpublish successfully.';
