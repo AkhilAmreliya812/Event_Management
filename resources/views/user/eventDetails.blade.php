@@ -114,6 +114,7 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
         $(document).ready(function() {
             // Open the registration form modal
@@ -151,9 +152,10 @@
                                 $('#alertBox').show(200);
                             } else if (response.status === 'success') {
                                 $("#registrationForm")[0].reset();
-                                $('#alertBox').addClass('alert-success');
-                                $('#alertMessage').text(response.message);
-                                $('#alertBox').show(200);
+                                // $('#alertBox').addClass('alert-success');
+                                // $('#alertMessage').text(response.message);
+                                // $('#alertBox').show(200);
+                                toastr.success(response.message, 'Success');
                             } else if (response.status === 'error') {
                                 if (response.errors.name) {
                                     $("#name").after(

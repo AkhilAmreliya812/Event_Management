@@ -43,7 +43,6 @@
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
-
                 <div class="col-md-6">
                     <label for="endDate" class="form-label">End Date <span class="text-danger">*</span></label>
                     <input type="date" class="form-control" name="end_date" id="endDate"
@@ -124,26 +123,31 @@
 
     <script>
         $(function() {
-            // --- register custom validators BEFORE calling .validate() ---
 
-            // greaterThan: end date must be >= start date (change to > if you want strictly after)
+            const today = new Date().toISOString().split('T')[0];
+            $('#startDate').attr('min', today);
+
+            $('#startDate').on('change', function() {
+                const startDate = $(this).val();
+                $('#endDate').attr('min', startDate);
+                if ($('#endDate').val() && $('#endDate').val() < startDate) {
+                    $('#endDate').val('');
+                }
+            });
+
             $.validator.addMethod("greaterThan", function(value, element, param) {
-                var start = $(param).val();
-                if (!start || !value) return true; // let 'required' handle empties
-                // parse yyyy-mm-dd safely
-                var s = start.split('-');
-                var e = value.split('-');
-                if (s.length !== 3 || e.length !== 3) return false;
-                var startTs = Date.UTC(+s[0], +s[1] - 1, +s[2]);
-                var endTs = Date.UTC(+e[0], +e[1] - 1, +e[2]);
-                // allow same-day end date: use (endTs >= startTs)
-                return this.optional(element) || (endTs >= startTs);
-            }, "End date must be on/after start date");
+                if (!value || !$(param).val()) return true;
+                return new Date(value) >= new Date($(param).val());
+            }, "End date must be on or after the start date");
 
-            // simple extension check (so you don't need additional-methods.js)
+            $.validator.addMethod("minToday", function(value, element) {
+                if (!value) return true;
+                return new Date(value) >= new Date(today);
+            }, "Start date must be today or later");
+
             $.validator.addMethod("fileExtension", function(value, element, allowed) {
                 if (!value)
-                    return true; // no file selected -> valid (use required rule if you want mandatory)
+                    return true;
                 var ext = value.split('.').pop().toLowerCase();
                 var allowedArr = allowed.split('|').map(function(s) {
                     return s.toLowerCase();
@@ -177,7 +181,6 @@
                     category: {
                         required: true
                     },
-                    // make event_image required only for new events (id empty)
                     event_image: {
                         required: function() {
                             return $('#id').val() === "" || typeof $('#id').val() === 'undefined';
@@ -207,7 +210,7 @@
                     end_date: {
                         required: "Please select the end date",
                         date: "Please enter a valid date",
-                        greaterThan: "End date must be on or after the start date"
+                        greaterThan: "End date must be after the start date"
                     },
                     price: {
                         required: "Please enter the price",
@@ -247,7 +250,4 @@
             });
         });
     </script>
-
-
-
 @endsection

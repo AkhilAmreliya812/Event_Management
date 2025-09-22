@@ -20,11 +20,20 @@ class AuthenticateAdmin extends Controller
     // login user
     public function authenticate(Request $request)
     {
-        $credentials = $request->only('email', 'password');
-        $validate = Validator::make($request->all(), [
+        $rules = [
             'email' => 'required|email',
             'password' => 'required',
-        ]);
+        ];
+
+        $messages = [
+            'email.required' => 'The email address is required.',
+            'email.email' => 'The email address must be a valid email format.',
+            
+            'password.required' => 'The password is required.',
+        ];
+
+        $credentials = $request->only('email', 'password');
+        $validate = Validator::make($request->all(), $rules, $messages);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
         } else {

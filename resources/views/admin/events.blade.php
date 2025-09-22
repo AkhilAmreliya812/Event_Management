@@ -21,7 +21,7 @@
     <a class="btn btn-secondary m-3" href="{{ route('admin-add_event') }}">Add New Event</a>
 
     <div class="m-4">
-        <table class="table table-bordered align-middle" id="events">
+        <table class="table table-bordered table-hover align-middle" id="events">
             <thead>
                 <th>Event Title</th>
                 <th>Category</th>
@@ -51,105 +51,10 @@
     </div>
 @endsection
 @section('script')
-<script>
-    $(document).ready(function() {        
-        $('#events').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{ route('admin-events') }}",
-            columns: [{
-                    data: 'event_title',
-                    name: 'event_title',
-                    orderable: true,
-                    searchable: true,
-                    className: 'text-start'
-                },
-                {
-                    data: 'category',
-                    name: 'category',
-                    orderable: false,
-                    searchable: false,
-                    className: 'text-start'
-                },
-                {
-                    data: 'start_date',
-                    name: 'start_date',
-                    orderable: false,
-                    searchable: false,
-                    className: 'text-center'
-                },
-                {
-                    data: 'end_date',
-                    name: 'end_date',
-                    orderable: false,
-                    searchable: false,
-                    className: 'text-center'
-                },
-                {
-                    data: 'event_image',
-                    name: 'event_image',
-                    orderable: false,
-                    searchable: false,
-                    className: 'text-center'
-                },
-                {
-                    data: 'document',
-                    name: 'document',
-                    orderable: false,
-                    searchable: false,
-                    className: 'text-center'
-                },
-                {
-                    data: 'status',
-                    name: 'status',
-                    orderable: false,
-                    searchable: false,
-                    className: 'text-center'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false,
-                    className: 'text-center'
-                },
-            ]
-        });
-
-
-        //Publish/Unpublish Event.
-        $('body').on('change','.eventStatus', function() {
-
-            $.ajax({
-                url: "{{ route('admin-eventStatus') }}",
-                type: 'POST',
-                data: {
-                    'eventId': $(this).attr('id'),
-                    'status': $(this).is(':checked') ? 'Y' : 'N',
-                    '_token': '{{ csrf_token() }}'
-                },
-                success: function(response) {
-                    if (response.status == "success") {
-                        $('#events').DataTable();
-                        toastr.success('', response.message, {
-                            timeOut: 3500
-                        })
-                    } else if (response.status == "error") {
-                        toastr.error('', response.message, {
-                            timeOut: 3500
-                        })
-                    }
-                },
-            });
-        });
-     });
-
-    $("#errorAlert").delay(3000).fadeOut(500, function() {
-        $(this).remove();
-    });
-
-    $("#successAlert").delay(3000).fadeOut(100, function() {
-        $(this).remove();
-    });
-</script>
+    <script>       
+        var EVENTS_STATUS_URL = "{{ route('admin-eventStatus') }}";
+        var EVENTS_CSRF_TOKEN = "{{ csrf_token() }}";
+        var EVENTS_AJAX_URL = "{{ route('admin-events') }}";
+    </script>
+    <script src="{{ asset('EventsScript.js') }}"></script>
 @endsection

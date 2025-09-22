@@ -1,17 +1,16 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Mail\ForgotPasswordMailer;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ForgotPasswordMailer;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class ChangingAuthCredentials extends Controller
 {
@@ -23,13 +22,24 @@ class ChangingAuthCredentials extends Controller
     // crate new password
     public function setNewPassword(Request $request)
     {
-        $validate = Validator::make($request->all(),
-            [
-                'old_password' => 'required',
-                'password' => 'required|confirmed|:min:8',
-                'password_confirmation' => 'required',
-            ]
-        );
+
+        $rules = [
+            'old_password' => 'required',
+            'password' => 'required|confirmed|:min:8',
+            'password_confirmation' => 'required',
+        ];
+
+        $messages = [
+            'old_password.required' => 'The current password is required.',
+
+            'password.required' => 'The new password is required.',
+            'password.confirmed' => 'The new password confirmation does not match.',
+            'password.min' => 'The new password must be at least 8 characters long.',
+
+            'password_confirmation.required' => 'The password confirmation is required.',
+        ];
+
+        $validate = Validator::make($request->all(), $rules, $messages);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
         } else {
@@ -41,8 +51,7 @@ class ChangingAuthCredentials extends Controller
                     return redirect()->back()->with('error', 'Old password and New password can not be same');
                 } else {
                     User::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
-                    Auth::logout();
-                    return redirect()->route('admin-login')->with('success', 'Password changed successfully');
+                    return redirect()->route('admin-dashbord')->with('success', 'Password changed successfully');
                 }
             }
         }
@@ -57,9 +66,13 @@ class ChangingAuthCredentials extends Controller
     // send forgot password link via email
     public function sentResetLink(Request $request)
     {
-        $validate = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
+        $rules = ['email' => 'required|email'];
+        $messages = [
+            'email.required' => 'The email address is required.',
+            'email.email' => 'The email address must be a valid email format.',
+        ];
+
+        $validate = Validator::make($request->all(),$rules, $messages);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate);
         }
@@ -93,10 +106,21 @@ class ChangingAuthCredentials extends Controller
     // submit new password
     public function submitResetPassword(Request $request)
     {
-        $validate = Validator::make($request->all(), [
+
+        $rules = [
             'password' => 'required|min:8|confirmed',
             'password_confirmation' => 'required',
-        ]);
+        ];
+
+        $messages = [
+            'password.required' => 'The password is required.',
+            'password.min' => 'The password must be at least 8 characters long.',
+            'password.confirmed' => 'The password confirmation does not match.',
+            
+            'password_confirmation.required' => 'The password confirmation is required.',
+        ];
+
+        $validate = Validator::make($request->all(),$rules, $messages);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate);
         } else {

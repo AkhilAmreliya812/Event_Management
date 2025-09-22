@@ -19,12 +19,25 @@ class AddEditAdminProfile extends Controller
     // update profile
     public function upddate_profile(Request $request)
     {
-        $validate = Validator::make($request->all(),
-            [
-                'name' => 'required|min:3|max:70',
-                'phone' => 'required|max:15',
-                'dob' => 'required',
-            ]);
+
+        $rules =  [
+            'name' => 'required|min:3|max:70',
+            'phone' => 'required|max:15',
+            'dob' => 'required',
+        ];
+
+        $messages = [
+            'name.required' => 'The name is required.',
+            'name.min' => 'The name must be at least 3 characters long.',
+            'name.max' => 'The name cannot exceed 70 characters.',
+            
+            'phone.required' => 'The phone number is required.',
+            'phone.max' => 'The phone number cannot exceed 15 characters.',
+            
+            'dob.required' => 'The date of birth is required.',
+        ];
+
+        $validate = Validator::make($request->all(),$rules, $messages);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
         } else {
@@ -63,17 +76,41 @@ class AddEditAdminProfile extends Controller
     // save details
     public function saveDetails(Request $request)
     {
-        $validate = Validator::make($request->all(),
-            [
-                'name' => 'required|max:70|min:2',
-                'email' => 'required|email',
-                'phone' => 'required|max:15',
-                'password' => 'required|min:8|max:20|confirmed',
-                'password_confirmation' => 'required',
-                'dob' => 'required',
-                'profile_photo' => 'required',
-            ]
-        );
+        $rules =  [
+            'name' => 'required|max:70|min:2',
+            'email' => 'required|email',
+            'phone' => 'required|max:15',
+            'password' => 'required|min:8|max:20|confirmed',
+            'password_confirmation' => 'required',
+            'dob' => 'required',
+            'profile_photo' => 'required|mimes:jpg,jpeg,png,gif',
+        ];
+
+        $messages = [
+            'name.required' => 'The name is required.',
+            'name.min' => 'The name must be at least 2 characters long.',
+            'name.max' => 'The name cannot exceed 70 characters.',
+            
+            'email.required' => 'The email address is required.',
+            'email.email' => 'The email address must be a valid email format.',
+            
+            'phone.required' => 'The phone number is required.',
+            'phone.max' => 'The phone number cannot exceed 15 characters.',
+            
+            'password.required' => 'The password is required.',
+            'password.min' => 'The password must be at least 8 characters long.',
+            'password.max' => 'The password cannot exceed 20 characters.',
+            'password.confirmed' => 'The password confirmation does not match.',
+            
+            'password_confirmation.required' => 'The password confirmation is required.',
+            
+            'dob.required' => 'The date of birth is required.',
+            
+            'profile_photo.required' => 'The profile photo is required.',
+            'profile_photo.mimes' => 'The profile photo must be a file of type: jpg, jpeg, png, or gif.',
+        ];
+
+        $validate = Validator::make($request->all(),$rules, $messages);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
         } else {

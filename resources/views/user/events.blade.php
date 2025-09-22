@@ -14,6 +14,7 @@
                         <div>
                             <p class="my-1">{{ 'From ₹' . $event->price . '/-' }}</p>
                             <p class="my-1 mb-2">{{ 'Start Date : ' . $event->start_date }}</p>
+                            <p class="my-1 mb-2">{{ 'End Date : ' . $event->end_date }}</p>
                         </div>
 
                         <a href="{{ route('eventDetails', ['id' => $event->id]) }}" class="btn btn-primary">View</a>

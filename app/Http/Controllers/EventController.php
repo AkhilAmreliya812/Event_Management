@@ -78,17 +78,49 @@ class EventController extends Controller
     public function saveEvent(Request $request)
     {
 
-        $validate = Validator::make($request->all(), [
-            'event_title' => 'required|min:3|max:50',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'price' => 'required',
+        $rules = [
+            'event_title' => 'required|min:3|max:100',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'price' => 'required|numeric||min:0',
             'category' => 'required',
-            'event_image' => 'required',
-            'document' => 'required',
-            'description' => 'required',
-        ]
-        );
+            'event_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'document' => 'required|mimes:pdf,doc,docx|max:2048',
+            'description' => 'required|min:10|max:500',
+        ];
+
+        $messages = [
+            'event_title.required' => 'The event title is required.',
+            'event_title.min' => 'The event title must be at least 3 characters long.',
+            'event_title.max' => 'The event title cannot exceed 100 characters.',
+            
+            'start_date.required' => 'The start date is required.',
+            'start_date.date' => 'The start date must be a valid date.',
+            
+            'end_date.required' => 'The end date is required.',
+            'end_date.date' => 'The end date must be a valid date.',
+            'end_date.after_or_equal' => 'The end date must be on or after the start date.',
+            
+            'price.required' => 'The price is required.',
+            'price.numeric' => 'The price must be a valid number.',
+            'price.min' => 'The price cannot be less than 0.',
+            
+            'category.required' => 'The category is required.',
+            
+            'event_image.required' => 'The event image is required.',
+            'event_image.image' => 'The event image must be a valid image file.',
+            'event_image.mimes' => 'The event image must be a file of type: jpeg, png, jpg, gif, or svg.',
+            'event_image.max' => 'The event image cannot exceed 2MB in size.',
+            
+            'document.required' => 'The document is required.',
+            'document.mimes' => 'The document must be a file of type: pdf, doc, or docx.',
+            'document.max' => 'The document cannot exceed 2MB in size.',
+            
+            'description.required' => 'The description is required.',
+            'description.min' => 'The description must be at least 10 characters long.',
+            'description.max' => 'The description cannot exceed 500 characters.',
+        ];
+        $validate = Validator::make($request->all(), $rules, $messages);
 
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
@@ -177,16 +209,48 @@ class EventController extends Controller
 
     public function updateEvent(Request $request)
     {
-        $validate = Validator::make($request->all(),
-            [
-                'event_title' => 'required|min:3|max:50',
-                'start_date' => 'required',
-                'end_date' => 'required',
-                'price' => 'required',
-                'category' => 'required',
-                'description' => 'required',
-            ]
-        );
+
+        $rules = [
+            'event_title' => 'required|min:3|max:100',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'price' => 'required|numeric||min:0',
+            'category' => 'required',
+            'event_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'document' => 'mimes:pdf,doc,docx|max:2048',
+            'description' => 'required|min:10|max:500',
+        ];
+
+        $messages = [
+            'event_title.required' => 'The event title is required.',
+            'event_title.min' => 'The event title must be at least 3 characters long.',
+            'event_title.max' => 'The event title cannot exceed 100 characters.',
+            
+            'start_date.required' => 'The start date is required.',
+            'start_date.date' => 'The start date must be a valid date.',
+            
+            'end_date.required' => 'The end date is required.',
+            'end_date.date' => 'The end date must be a valid date.',
+            'end_date.after_or_equal' => 'The end date must be on or after the start date.',
+            
+            'price.required' => 'The price is required.',
+            'price.numeric' => 'The price must be a valid number.',
+            'price.min' => 'The price cannot be less than 0.',
+            
+            'category.required' => 'The category is required.',
+            
+            'event_image.image' => 'The event image must be a valid image file.',
+            'event_image.mimes' => 'The event image must be a file of type: jpeg, png, jpg, gif, or svg.',
+            'event_image.max' => 'The event image cannot exceed 2MB in size.',
+            
+            'document.mimes' => 'The document must be a file of type: pdf, doc, or docx.',
+            'document.max' => 'The document cannot exceed 2MB in size.',
+            
+            'description.required' => 'The description is required.',
+            'description.min' => 'The description must be at least 10 characters long.',
+            'description.max' => 'The description cannot exceed 500 characters.',
+        ];
+        $validate = Validator::make($request->all(),$rules, $messages);
 
         if ($validate->passes()) {
             $event = Event::find($request->id);

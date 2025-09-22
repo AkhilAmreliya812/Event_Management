@@ -5,6 +5,8 @@ use App\Mail\RegisterConfirmation;
 use App\Models\Booking;
 use App\Models\Contact;
 use App\Models\Event;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -22,23 +24,42 @@ class FrontUserController extends Controller
 
     public function events()
     {
-        $events = Event::where('status', 'Y')->get();
+        $currentDate = new DateTime();
+        $events = Event::where('status', 'Y')->whereDate('end_date', '>=', $currentDate->format('Y-m-d'))->get();
+
         return view('user.events', ['events' => $events]);
     }
 
     public function contactRequest(Request $request)
     {
 
-        $validate = Validator::make($request->all(),
-            [
-                'name' => 'required|min:2|max:70',
-                'email' => 'required|min:2|max:70|email',
-                'phone' => 'required|max:15',
-                'address' => 'required',
-                'description' => 'required',
-            ]
-        );
+        $rules =  [
+            'name' => 'required|min:2|max:70',
+            'email' => 'required|min:2|max:70|email',
+            'phone' => 'required|max:15',
+            'address' => 'required',
+            'description' => 'required',
+        ];
 
+        $messages = [
+            'name.required' => 'The name is required.',
+            'name.min' => 'The name must be at least 2 characters long.',
+            'name.max' => 'The name cannot exceed 70 characters.',
+            
+            'email.required' => 'The email address is required.',
+            'email.min' => 'The email address must be at least 2 characters long.',
+            'email.max' => 'The email address cannot exceed 70 characters.',
+            'email.email' => 'The email address must be a valid email format.',
+            
+            'phone.required' => 'The phone number is required.',
+            'phone.max' => 'The phone number cannot exceed 15 characters.',
+            
+            'address.required' => 'The address is required.',
+            
+            'description.required' => 'The description is required.',
+        ];
+
+        $validate = Validator::make($request->all(),$rules, $messages);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate);
         } else {
@@ -75,13 +96,29 @@ class FrontUserController extends Controller
 
     public function registraionEvent(Request $request)
     {
-
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'name' => 'required|string|max:100',
             'email' => 'required|email',
-            'phone' => 'required|string|max:20',
+            'phone' => 'required|string|max:20|',
             'tearmsconditions' => 'required'
-        ]);
+        ];
+
+        $messages = [
+            'name.required' => 'The name is required.',
+            'name.string' => 'The name must be a valid string.',
+            'name.max' => 'The name cannot exceed 100 characters.',
+            
+            'email.required' => 'The email address is required.',
+            'email.email' => 'The email address must be a valid email format.',
+            
+            'phone.required' => 'The phone number is required.',
+            'phone.string' => 'The phone number must be a valid string.',
+            'phone.max' => 'The phone number cannot exceed 20 characters.',
+            
+            'tearmsconditions.required' => 'You must accept the terms and conditions.',
+        ];
+
+        $validator = Validator::make($request->all(),$rules, $messages);
 
         if ($validator->fails()) {
             return response()->json([
