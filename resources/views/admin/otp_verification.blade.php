@@ -5,7 +5,7 @@
 
 <div>
 
-    <form action="{{ route('admin-verifyOTP') }}" method="POST">
+    <form action="{{ route('admin-verifyOTP') }}" method="POST" id="otpVerificationForm">
         @csrf
 
         <input type="hidden" name="email" id="email" value="{{ session('email') }}">
@@ -73,4 +73,6 @@
     })
 </script>
 @endsection
-</script>
+@section('script')
+    <script src="{{ asset('JS/validation.js') }}"></script>
+@endsection

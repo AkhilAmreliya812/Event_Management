@@ -2,7 +2,7 @@
 @section('title', 'Reset Password - Event Manager')
 @section('main')
 @section('form-title','Reset Password')
-    <form action="{{ route('admin-submitResetPassword') }}" method="POST">
+    <form action="{{ route('admin-submitResetPassword') }}" method="POST" id="resetPasswordForm">
         @csrf
 
         <input type="hidden" name="token" value="{{ $resetToken }}">
@@ -33,5 +33,7 @@
         </div>
         <p class="text-center mt-3"><a href={{ route('admin-login') }} class="text-decoration-none text-primary">Back Login</a></p>
     </form>
-
+@endsection
+@section('script')
+    <script src="{{ asset('JS/validation.js') }}"></script>
 @endsection

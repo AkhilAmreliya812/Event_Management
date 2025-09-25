@@ -51,7 +51,7 @@ class ChangingAuthCredentials extends Controller
                     return redirect()->back()->with('error', 'Old password and New password can not be same');
                 } else {
                     User::where('email', $request->email)->update(['password' => Hash::make($request->password)]);
-                    return redirect()->route('admin-dashbord')->with('success', 'Password changed successfully');
+                    return redirect()->back()->with('success', 'Password changed successfully...');
                 }
             }
         }
@@ -66,13 +66,14 @@ class ChangingAuthCredentials extends Controller
     // send forgot password link via email
     public function sentResetLink(Request $request)
     {
-        $rules = ['email' => 'required|email'];
+        $rules = ['email' => 'required|email|max:70'];
         $messages = [
             'email.required' => 'The email address is required.',
             'email.email' => 'The email address must be a valid email format.',
+            'email.max' => 'The email address cannot exceed 70 characters.',
         ];
 
-        $validate = Validator::make($request->all(),$rules, $messages);
+        $validate = Validator::make($request->all(), $rules, $messages);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate);
         }
@@ -100,7 +101,13 @@ class ChangingAuthCredentials extends Controller
     // reset password form
     public function resetPassword($token)
     {
-        return view('admin.reset_password', ['resetToken' => $token]);
+
+        $tokenExist = DB::table('password_reset_tokens')->where('token', $token)->first();
+        if ($tokenExist) {
+            return view('admin.reset_password', ['resetToken' => $token]);
+        }
+        return redirect()->route('admin-login')->with('error', 'You are trying to access link which is expired or invalid');
+
     }
 
     // submit new password
@@ -116,11 +123,11 @@ class ChangingAuthCredentials extends Controller
             'password.required' => 'The password is required.',
             'password.min' => 'The password must be at least 8 characters long.',
             'password.confirmed' => 'The password confirmation does not match.',
-            
+
             'password_confirmation.required' => 'The password confirmation is required.',
         ];
 
-        $validate = Validator::make($request->all(),$rules, $messages);
+        $validate = Validator::make($request->all(), $rules, $messages);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate);
         } else {

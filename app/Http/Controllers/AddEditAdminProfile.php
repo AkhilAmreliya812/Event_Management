@@ -19,7 +19,6 @@ class AddEditAdminProfile extends Controller
     // update profile
     public function upddate_profile(Request $request)
     {
-
         $rules =  [
             'name' => 'required|min:3|max:70',
             'phone' => 'required|max:15',
@@ -47,7 +46,7 @@ class AddEditAdminProfile extends Controller
                 $user->phone = $request->phone;
                 $user->dob = $request->dob;
                 $user->email = $user->email;
-                $user->profile_photo = $request->hasfile('profile_photo') ? $this->imageUpload($request) : $user->profile_photo;
+                $user->profile_photo = $request->hasfile('profile_photo') ? $this->imageUpload($request->file('profile_photo')) : $user->profile_photo;
                 $user->save();
                 return redirect()->back()->with('success', 'Your profile updated successfully');
             } else {
@@ -64,9 +63,8 @@ class AddEditAdminProfile extends Controller
     }
 
     // profile photo upload
-    public function imageUpload(Request $request)
+    public function imageUpload($file)
     {
-        $file = $request->file('profile_photo');
         $fileName = uniqid() . date('Ymd') . '.' . $file->getClientOriginalExtension();
         $file->move(public_path('profile_photos'), $fileName);
         $profile_photo = "profile_photos/" . $fileName;
@@ -120,7 +118,7 @@ class AddEditAdminProfile extends Controller
             $user->phone = $request->phone;
             $user->password = $request->password;
             $user->dob = $request->dob;
-            $user->profile_photo = $this->imageUpload($request);
+            $user->profile_photo = $this->imageUpload($request->file('profile_photo'));
             $userExist = User::where('email', $request->email)->first();
             if ($userExist) {
                 return redirect()->back()->with('error', $request->email . ' is alredy exist')->withInput();

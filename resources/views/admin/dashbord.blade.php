@@ -6,7 +6,7 @@
 
     <div class="row">
         <div class="col-md-6">
-            <table class="table" id="contactLead">
+            <table class="table" id="contactLead" style="font-size: 15px;">
                 <thead>
                     <th>Name</th>
                     <th>Email</th>
@@ -17,7 +17,7 @@
                         <tr>
                             <td>{{$contactLead->name}}</td>
                             <td>{{$contactLead->email}}</td>
-                            <td>{{ date('Y M, d', strtotime($contactLead->created_at)) }}</td>
+                            <td>{{ date('d M, Y', strtotime($contactLead->created_at)) }}</td>
                         </tr>
                     @endforeach
                 </tbody>

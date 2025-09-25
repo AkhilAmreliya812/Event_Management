@@ -5,7 +5,7 @@
     <h1>Contact Lead</h1>
 
     <div class="m-4">
-        <table class="table table-bordered   text-center" id="contactLead">
+        <table class="table table-bordered   text-center" id="contactLead" style="font-size: 15px;">
             <thead>
                 <th>Name</th>
                 <th>Email</th>
@@ -38,6 +38,6 @@
         var DESCRIPTION_URL = "{{ route('getDescription') }}";
         var CSRF_TOKEN = "{{ csrf_token() }}";
     </script>
-    <script src="{{ asset('script.js') }}"></script>
+    <script src="{{ asset('JS/contactLead.js') }}"></script>
 @endsection
 

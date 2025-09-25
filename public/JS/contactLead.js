@@ -40,6 +40,7 @@ $(document).ready(function () {
                 className: "text-center",
             },
         ],
+        "order": [[ 4, "desc" ]]
     });
 
     $("body").on("click", ".description_icon", function () {

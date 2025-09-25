@@ -28,7 +28,6 @@ class AuthenticateAdmin extends Controller
         $messages = [
             'email.required' => 'The email address is required.',
             'email.email' => 'The email address must be a valid email format.',
-            
             'password.required' => 'The password is required.',
         ];
 
@@ -81,7 +80,6 @@ class AuthenticateAdmin extends Controller
                 return redirect()->back()->with('error', 'OTP has been expired');
             }
             if ($request->otp == $user->verification_code) {
-
                 User::where('email', $request->email)->update(['email_verified' => 'Y', 'verification_code' => null]);
                 $credentials = $request->only('email', 'password');
                 if (Auth::attempt(($credentials))) {

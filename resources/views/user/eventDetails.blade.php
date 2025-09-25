@@ -5,19 +5,17 @@
 @section('main')
     <div class="loader-overlay" id="pageLoader">
         <div class="spinner-grow" style="width: 5rem; height: 5rem;" role="status">
-            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 
 
     <div class="container my-2">
-
-
-        <div class="row mb-3">
+        <div class="row ">
             <div class="col-md-6">
                 <h1 class="card-title mb-2">{{ $event->event_title }}</h1>
             </div>
-            <div class="col-md-6 mb-2 d-flex justify-content-end">
+            <div class="col-md-6 mb-2 d-flex justify-content-end gap-2">
+                <a class="btn btn-secondary text-decoration-none" href="{{ route('events') }}">Back</a>
                 <button class="btn btn-primary" id="openForm">Register Now</button>
             </div>
         </div>
@@ -97,11 +95,10 @@
                                 </label>
                             </div>
                             <div class="mb-3 row">
-                                <div class="col-lg-6">
-                                    <button id="registeration" class="btn btn-primary w-100">Save Details</button>
-                                </div>
-                                <div class="col-lg-6">
-                                    <button id="resetData" class="btn btn-danger w-100">Reset</button>
+                                <div class="col-lg-6"></div>
+                                <div class="col-lg-6 d-flex justify-content-end gap-2">
+                                    <button id="resetData" class="btn btn-danger">Reset</button>
+                                    <button id="registeration" class="btn btn-primary">Save Details</button>
                                 </div>
                             </div>
                         </form>
@@ -110,160 +107,11 @@
             </div>
         </div>
     </div>
-
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+@endsection
+@section('script')
+<script src="{{ asset('JS/registerEvent.js') }}"></script>
     <script>
-        $(document).ready(function() {
-            // Open the registration form modal
-            $('#openForm').on('click', function() {
-                $('#alertBox').hide();
-                $("#registrationForm")[0].reset();
-                $('#bookEvent').modal('show');
-                $('.errorMsg').remove();
-            });
-
-            // Handle form submission
-            $('#registeration').on('click', function(event) {
-                event.preventDefault();
-                $('.errorMsg').remove();
-
-                // Validate the form before submitting
-                if ($("#registrationForm").valid()) {
-                    let dataObj = new FormData($("#registrationForm")[0]);
-                    $('#pageLoader').show();
-                    $('#pageLoader').addClass('d-flex justify-content-center');
-
-                    $.ajax({
-                        url: "{{ route('registraionEvent') }}",
-                        type: "POST",
-                        data: dataObj,
-                        contentType: false,
-                        processData: false,
-                        success: function(response) {
-                            $('#pageLoader').hide();
-                            $('#pageLoader').removeClass('d-flex justify-content-center');
-
-                            if (response.status === 'duplicate') {
-                                $('#alertBox').addClass('alert-danger');
-                                $('#alertMessage').text(response.message);
-                                $('#alertBox').show(200);
-                            } else if (response.status === 'success') {
-                                $("#registrationForm")[0].reset();
-                                // $('#alertBox').addClass('alert-success');
-                                // $('#alertMessage').text(response.message);
-                                // $('#alertBox').show(200);
-                                toastr.success(response.message, 'Success');
-                            } else if (response.status === 'error') {
-                                if (response.errors.name) {
-                                    $("#name").after(
-                                        `<p class="text-danger errorMsg">${response.errors.name}</p>`
-                                    );
-                                }
-                                if (response.errors.email) {
-                                    $("#email").after(
-                                        `<p class="text-danger errorMsg">${response.errors.email}</p>`
-                                    );
-                                }
-                                if (response.errors.phone) {
-                                    $("#phone").after(
-                                        `<p class="text-danger errorMsg">${response.errors.phone}</p>`
-                                    );
-                                }
-                                if (response.errors.tearmsconditions) {
-                                    $("#tc").after(
-                                        `<p class="text-danger errorMsg">${response.errors.tearmsconditions}</p>`
-                                    );
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-
-            // Reset form data
-            $('#resetData').on('click', function(event) {
-                event.preventDefault();
-                $("#registrationForm")[0].reset();
-                $('#alertBox').hide(200);
-                $('#pageLoader').hide();
-                $('#pageLoader').removeClass('d-flex justify-content-center');
-                $('.errorMsg').remove();
-            });
-
-            // Frontend validation rules
-            $('#registrationForm').validate({
-                errorClass: "error",
-                errorElement: "span",
-                rules: {
-                    name: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 70,
-                    },
-                    email: {
-                        required: true,
-                        email: true
-                    },
-                    phone: {
-                        required: true,
-                        digits: true,
-                        minlength: 10,
-                        maxlength: 15
-                    },
-                    tearmsconditions: {
-                        required: true
-                    }
-                },
-                messages: {
-                    name: {
-                        required: "Please enter your name",
-                        minlength: "Name must be at least 3 characters",
-                        maxlength: "Name must not exceed 70 characters",
-                    },
-                    email: {
-                        required: "Please enter your email",
-                        email: "Please enter a valid email address"
-                    },
-                    phone: {
-                        required: "Please enter your phone number",
-                        digits: "Phone number must contain only digits",
-                        minlength: "Phone number must be at least 10 digits",
-                        maxlength: "Phone number must not exceed 15 digits"
-                    },
-                    tearmsconditions: {
-                        required: "You must accept the terms and conditions"
-                    }
-                },
-                highlight: function(element) {
-                    if ($(element).is(':checkbox')) {
-                        $('label[for="' + $(element).attr('id') + '"]').addClass('text-danger');
-                    } else {
-                        $(element).addClass('is-invalid');
-                    }
-                },
-                unhighlight: function(element) {
-                    if ($(element).is(':checkbox')) {
-                        $('label[for="' + $(element).attr('id') + '"]').removeClass('text-danger');
-                    } else {
-                        $(element).removeClass('is-invalid');
-                    }
-                },
-                errorPlacement: function(error, element) {
-                    error.addClass('text-danger d-block mt-1');
-                    if (element.is(':checkbox') || element.attr("name") === "tearmsconditions") {
-                        $('#tc').next('span.error, p.error').remove();
-                        error.insertAfter($('#tc'));
-                    } else if (element.parent('.input-group').length) {
-                        error.insertAfter(element.parent());
-                    } else {
-                        error.insertAfter(element);
-                    }
-                }
-            });
-        });
+        var SUBSCRIBE_AJAX_URL = "{{ route('subscribeEvent') }}"
     </script>
 
 @endsection

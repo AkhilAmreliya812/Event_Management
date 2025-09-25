@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Booking extends Model
+class Subscription extends Model
 {
-    /**
+       /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
-    protected $fillable = ['name','email','phone','event_id'];
+    protected $fillable = [
+        'event_id','name', 'email', 'phone'
+    ];
 }

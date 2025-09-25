@@ -2,7 +2,7 @@
 @section('title', 'Forgot password - Event Manager')
 @section('main')
 @section('form-title','Forgot Password')
-    <form action="{{ route('admin-sentResetLink') }}" method="POST">
+    <form action="{{ route('admin-sentResetLink') }}" method="POST" id="forgotPasswordForm">
         @csrf
         <div class="mb-4">
             <label for="email" class="form-label">Email address</label>
@@ -22,4 +22,7 @@
         <p class="text-center mt-3"><a href={{ route('admin-login') }} class="text-decoration-none text-primary">Back Login</a></p>
     </form>
 
+@endsection
+@section('script')
+    <script src="{{ asset('JS/validation.js') }}"></script>
 @endsection

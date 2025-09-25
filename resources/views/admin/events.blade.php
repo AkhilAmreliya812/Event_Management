@@ -21,12 +21,13 @@
     <a class="btn btn-secondary m-3" href="{{ route('admin-add_event') }}">Add New Event</a>
 
     <div class="m-4">
-        <table class="table table-bordered table-hover align-middle" id="events">
+        <table class="table table-bordered table-hover align-middle" id="events" style="font-size: 15px;">
             <thead>
                 <th>Event Title</th>
                 <th>Category</th>
                 <th>Start Date</th>
                 <th>End Date</th>
+                <th>Order By</th>
                 <th>Event Image</th>
                 <th>Document</th>
                 <th>Publish</th>
@@ -49,12 +50,15 @@
             </div>
         </div>
     </div>
+
+    
 @endsection
 @section('script')
     <script>       
         var EVENTS_STATUS_URL = "{{ route('admin-eventStatus') }}";
         var EVENTS_CSRF_TOKEN = "{{ csrf_token() }}";
         var EVENTS_AJAX_URL = "{{ route('admin-events') }}";
+        EVENTS_DELETE_URL = "{{ route('admin-deleteEvent') }}";
     </script>
-    <script src="{{ asset('EventsScript.js') }}"></script>
+    <script src="{{ asset('JS/EventsScript.js') }}"></script>
 @endsection

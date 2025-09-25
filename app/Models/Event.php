@@ -11,6 +11,10 @@ class Event extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'event_title', 'start_date', 'end_date', 'price', 'category', 'event_image', 'document', 'description',
+        'event_title', 'start_date', 'end_date', 'price', 'category', 'event_image', 'document', 'description', 'orderBy'
     ];
+
+    public static function saveEvent($data) {
+        return self::create($data);
+    }
 }
