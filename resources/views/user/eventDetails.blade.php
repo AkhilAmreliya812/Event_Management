@@ -70,8 +70,9 @@
                             </div>
                         </div>
 
-                        <form id="registrationForm">
+                        <form id="registrationForm" autocomplete="off">
                             @csrf
+                            @honeypot
                             <input type="hidden" name="event_id" id="event_id" value="{{ $event->id }}">
                             <div class="mb-3">
                                 <label class="form-label">Name</label>

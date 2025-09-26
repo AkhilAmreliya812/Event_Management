@@ -53,7 +53,7 @@ class AuthenticateAdmin extends Controller
                     if (Auth::attempt($credentials)) {
                         return redirect()->route('admin-dashbord');
                     } else {
-                        return redirect()->back()->with('error', 'Invalid Credentials');
+                        return redirect()->back()->with('error', 'Invalid Credentials')->withInput();
                     }
                 }
             } else {

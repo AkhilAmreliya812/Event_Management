@@ -37,6 +37,7 @@ $(document).ready(function() {
                         $('#bookEvent').modal('hide');
                         toastr.success(response.message, 'Success');
                     } else if (response.status === 'error') {
+
                         if (response.errors.name) {
                             $("#name").after(
                                 `<p class="text-danger errorMsg">${response.errors.name}</p>`
@@ -57,7 +58,12 @@ $(document).ready(function() {
                                 `<p class="text-danger errorMsg">${response.errors.tearmsconditions}</p>`
                             );
                         }
+                    } else if (response.status === 'limit') {
+                        toastr.error(toastr.success(response.message, 'Error'));
+                    } else if(response.status == 'spam') {
+                        toastr.error(toastr.success(response.message, 'Error'));
                     }
+
                 }
             });
         }

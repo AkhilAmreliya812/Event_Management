@@ -18,7 +18,7 @@ Route::get('/events',[FrontUserController::class,'events'])->name('events');
 Route::post('/contact',[FrontUserController::class,'contactRequest'])->name('contactRequest');
 Route::get('/events/{id}',[FrontUserController::class,'eventDetails'])->name('eventDetails');
 Route::get('/download/{id}', [FrontUserController::class, 'downloadDocument'])->name('download');
-Route::post('/subscribeEvent',[SubscribeEvent::class,'subscribeEvent'])->name('subscribeEvent');
+Route::post('/subscribeEvent',[SubscribeEvent::class,'subscribeEvent'])->name('subscribeEvent')->middleware(Spatie\Honeypot\ProtectAgainstSpam::class);
 Route::get('/termsconditions',[SubscribeEvent::class,'termsconditions'])->name('terms-conditions');
 Route::get('/subscriberList',[SubscribeEvent::class,'subscriberList'])->name('subscriberList');
 
@@ -41,7 +41,6 @@ Route::middleware('authorisedUser')->group(function () {
     Route::get('/adminPanel/profile{id}',[AddEditAdminProfile::class,'profile'])->name('admin-profile');
     Route::post('/adminPanel/update_profile',[AddEditAdminProfile::class,'upddate_profile'])->name('admin-update_profile');
     Route::get('/adminPanel/subscriberList',[SubscribeEvent::class,'subscriberList'])->name('admin-subscriberList');
-    //admin-subscriberList
 });
 
 Route::middleware('guestUser')->group(function () {

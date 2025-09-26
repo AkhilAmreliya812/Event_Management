@@ -14,7 +14,8 @@ class EventController extends Controller
         if (!request()->ajax()) {
             return view('admin.events');
         }
-        $events = Event::select('id', 'event_title', 'category', 'start_date', 'end_date', 'orderBy', 'event_image', 'document', 'status')->orderBy('orderBy', 'ASC')->get();
+        $events = Event::select('id', 'event_title', 'category', 'start_date', 'end_date', 'orderBy', 'event_image', 'document', 'status')
+            ->orderBy('orderBy', 'ASC')->get();
         return datatables()->of($events)
             ->addColumn('event_title', function ($row) {
                 return $row->event_title;
@@ -81,48 +82,48 @@ class EventController extends Controller
 
         $rules = [
             'event_title' => 'required|string|max:100|regex:/^[A-Za-z\s]+$/',
-            'start_date'  => 'required|date|after_or_equal:today',
-            'end_date'    => 'required|date|after_or_equal:start_date',
-            'price'       => 'required|numeric|min:0',
-            'category'    => 'required',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'price' => 'required|numeric|min:0',
+            'category' => 'required',
             'event_image' => 'required_without:id|file|mimes:jpg,jpeg,png,gif',
-            'document'    => 'required_without:id|file|mimes:pdf,doc,docx',
+            'document' => 'required_without:id|file|mimes:pdf,doc,docx',
             'description' => 'required|string|min:10',
         ];
-        
+
         $messages = [
             'event_title.required' => 'Please enter the event title.',
-            'event_title.string'   => 'Event title must be a string.',
-            'event_title.max'      => 'Event title must not exceed 100 characters.',
-            'event_title.regex'    => 'Event title must contain only letters and spaces and cannot be only whitespace.',
-        
-            'start_date.required'       => 'Please select the start date.',
-            'start_date.date'           => 'Please enter a valid start date.',
+            'event_title.string' => 'Event title must be a string.',
+            'event_title.max' => 'Event title must not exceed 100 characters.',
+            'event_title.regex' => 'Event title must contain only letters and spaces and cannot be only whitespace.',
+
+            'start_date.required' => 'Please select the start date.',
+            'start_date.date' => 'Please enter a valid start date.',
             'start_date.after_or_equal' => 'Start date must be today or later.',
-        
-            'end_date.required'       => 'Please select the end date.',
-            'end_date.date'           => 'Please enter a valid end date.',
+
+            'end_date.required' => 'Please select the end date.',
+            'end_date.date' => 'Please enter a valid end date.',
             'end_date.after_or_equal' => 'End date must be the same as or after the start date.',
-        
+
             'price.required' => 'Please enter the price.',
-            'price.numeric'  => 'Please enter a valid number for price.',
-            'price.min'      => 'Price must be a positive number.',
-        
+            'price.numeric' => 'Please enter a valid number for price.',
+            'price.min' => 'Price must be a positive number.',
+
             'category.required' => 'Please select a category.',
-        
+
             'event_image.required_without' => 'Please upload an event image (required when creating).',
-            'event_image.file'             => 'Event image must be a file.',
-            'event_image.mimes'            => 'Allowed image file types: jpg, jpeg, png, gif.',
-        
+            'event_image.file' => 'Event image must be a file.',
+            'event_image.mimes' => 'Allowed image file types: jpg, jpeg, png, gif.',
+
             'document.required_without' => 'Please upload a document (required when creating).',
-            'document.file'             => 'Document must be a file.',
-            'document.mimes'            => 'Allowed document types: pdf, doc, docx.',
-        
+            'document.file' => 'Document must be a file.',
+            'document.mimes' => 'Allowed document types: pdf, doc, docx.',
+
             'description.required' => 'Please provide a description.',
-            'description.string'   => 'Description must be text.',
-            'description.min'      => 'Description must be at least 10 characters long.',
+            'description.string' => 'Description must be text.',
+            'description.min' => 'Description must be at least 10 characters long.',
         ];
-        
+
         $validate = Validator::make($request->all(), $rules, $messages);
 
         if ($validate->fails()) {
@@ -140,7 +141,7 @@ class EventController extends Controller
                 'event_image' => $this->eventImage($request),
                 'document' => $this->document($request),
                 'description' => $request->description,
-            
+
                 // 'orderBy' => (int) $request->orderBy,
                 'orderBy' => $this->swapOrderAdd((int) $request->orderBy),
             ];
@@ -215,48 +216,48 @@ class EventController extends Controller
 
         $rules = [
             'event_title' => 'required|string|max:100|regex:/^[A-Za-z\s]+$/',
-            'start_date'  => 'required|date|after_or_equal:today',
-            'end_date'    => 'required|date|after_or_equal:start_date',
-            'price'       => 'required|numeric|min:0',
-            'category'    => 'required',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'price' => 'required|numeric|min:0',
+            'category' => 'required',
             'event_image' => 'required_without:id|file|mimes:jpg,jpeg,png,gif',
-            'document'    => 'required_without:id|file|mimes:pdf,doc,docx',
+            'document' => 'required_without:id|file|mimes:pdf,doc,docx',
             'description' => 'required|string|min:10',
         ];
-        
+
         $messages = [
             'event_title.required' => 'Please enter the event title.',
-            'event_title.string'   => 'Event title must be a string.',
-            'event_title.max'      => 'Event title must not exceed 100 characters.',
-            'event_title.regex'    => 'Event title must contain only letters and spaces and cannot be only whitespace.',
-        
-            'start_date.required'       => 'Please select the start date.',
-            'start_date.date'           => 'Please enter a valid start date.',
+            'event_title.string' => 'Event title must be a string.',
+            'event_title.max' => 'Event title must not exceed 100 characters.',
+            'event_title.regex' => 'Event title must contain only letters and spaces and cannot be only whitespace.',
+
+            'start_date.required' => 'Please select the start date.',
+            'start_date.date' => 'Please enter a valid start date.',
             'start_date.after_or_equal' => 'Start date must be today or later.',
-        
-            'end_date.required'       => 'Please select the end date.',
-            'end_date.date'           => 'Please enter a valid end date.',
+
+            'end_date.required' => 'Please select the end date.',
+            'end_date.date' => 'Please enter a valid end date.',
             'end_date.after_or_equal' => 'End date must be the same as or after the start date.',
-        
+
             'price.required' => 'Please enter the price.',
-            'price.numeric'  => 'Please enter a valid number for price.',
-            'price.min'      => 'Price must be a positive number.',
-        
+            'price.numeric' => 'Please enter a valid number for price.',
+            'price.min' => 'Price must be a positive number.',
+
             'category.required' => 'Please select a category.',
-        
+
             'event_image.required_without' => 'Please upload an event image (required when creating).',
-            'event_image.file'             => 'Event image must be a file.',
-            'event_image.mimes'            => 'Allowed image file types: jpg, jpeg, png, gif.',
-        
+            'event_image.file' => 'Event image must be a file.',
+            'event_image.mimes' => 'Allowed image file types: jpg, jpeg, png, gif.',
+
             'document.required_without' => 'Please upload a document (required when creating).',
-            'document.file'             => 'Document must be a file.',
-            'document.mimes'            => 'Allowed document types: pdf, doc, docx.',
-        
+            'document.file' => 'Document must be a file.',
+            'document.mimes' => 'Allowed document types: pdf, doc, docx.',
+
             'description.required' => 'Please provide a description.',
-            'description.string'   => 'Description must be text.',
-            'description.min'      => 'Description must be at least 10 characters long.',
+            'description.string' => 'Description must be text.',
+            'description.min' => 'Description must be at least 10 characters long.',
         ];
-        
+
         $validate = Validator::make($request->all(), $rules, $messages);
 
         if ($validate->passes()) {
@@ -311,11 +312,12 @@ class EventController extends Controller
         ]);
     }
 
-    public function swapOrderAdd($order) {
+    public function swapOrderAdd($order)
+    {
         $count = Event::count();
         if ($order > $count + 1) {
             $order = $count + 1;
-        } elseif ($order < 1) {
+        } else if ($order < 1) {
             $order = 1;
         }
         // Increment orderBy of existing events to make space for the new event
@@ -323,11 +325,12 @@ class EventController extends Controller
         return $order;
     }
 
-    public function swapOrderUpdate($oldOrder, $newOrder, $eventId) {
+    public function swapOrderUpdate($oldOrder, $newOrder, $eventId)
+    {
         $count = Event::count();
         if ($newOrder > $count) {
             $newOrder = $count;
-        } elseif ($newOrder < 1) {
+        } else if ($newOrder < 1) {
             $newOrder = 1;
         }
 
@@ -337,7 +340,7 @@ class EventController extends Controller
                 ->where('orderBy', '<=', $newOrder)
                 ->where('id', '!=', $eventId)
                 ->decrement('orderBy');
-        } elseif ($oldOrder > $newOrder) {
+        } else if ($oldOrder > $newOrder) {
             // Move up: Increment orderBy of events between new and old position
             Event::where('orderBy', '>=', $newOrder)
                 ->where('orderBy', '<', $oldOrder)
@@ -347,8 +350,9 @@ class EventController extends Controller
         return $newOrder;
     }
 
-    public function swaapOrderDelete($order) {
+    public function swaapOrderDelete($order)
+    {
         Event::where('orderBy', '>', $order)->decrement('orderBy');
         return true;
     }
-} 
+}

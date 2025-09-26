@@ -39,7 +39,7 @@
                         </div>
                     @endif
                 </div>
-                <form action="{{ route('contactRequest') }}" method="POST" id="contactUsForm" novalidate>
+                <form action="{{ route('contactRequest') }}" method="POST" id="contactUsForm" novalidate autocomplete="off">
                     @csrf
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>

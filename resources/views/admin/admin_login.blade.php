@@ -9,7 +9,7 @@
             <label for="email" class="form-label">Email address</label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
-                <input type="text" class="form-control" name="email" id="email" placeholder="Enter email">
+                <input type="text" class="form-control" name="email" id="email" value="{{ old('email') }}" placeholder="Enter email">
             </div>
             @error('email')
                 <div class="text-danger">{{ $message }}</div>

@@ -36,7 +36,7 @@ $(document).ready(function () {
                 data: "phone",
                 name: "phone",
                 orderable: false,
-                searchable: true,
+                searchable: false,
                 className: "text-center",
             },
         ],

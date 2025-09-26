@@ -12,6 +12,6 @@ class Subscription extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'event_id','name', 'email', 'phone'
+        'event_id','name', 'email', 'phone', 'ip_address'
     ];
 }

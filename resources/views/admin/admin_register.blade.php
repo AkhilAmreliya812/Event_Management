@@ -9,7 +9,6 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
                 <input type="text" class="form-control" name="name" id="name" placeholder="Enter full name" value="{{ old('name') }}">
-                <!-- Added value="{{ old('name') }}" to retain the old input value -->
             </div>
             @error('name')
                 <div class="text-danger">{{ $message }}</div>
@@ -20,7 +19,6 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-envelope-fill"></i></span>
                 <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" value="{{ old('email') }}">
-                <!-- Added value="{{ old('email') }}" to retain the old input value -->
             </div>
             @error('email')
                 <div class="text-danger">{{ $message }}</div>
@@ -31,7 +29,6 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
                 <input type="tel" class="form-control" name="phone" id="phone" placeholder="Enter phone number" value="{{ old('phone') }}">
-                <!-- Added value="{{ old('phone') }}" to retain the old input value -->
             </div>
             @error('phone')
                 <div class="text-danger">{{ $message }}</div>
@@ -42,7 +39,6 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
                 <input type="password" class="form-control" name="password" id="password" placeholder="Enter password">
-                <!-- Password fields typically do not use old() for security reasons -->
             </div>
             @error('password')
                 <div class="text-danger">{{ $message }}</div>
@@ -53,7 +49,6 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
                 <input type="password" class="form-control" name="password_confirmation" id="confirmPassword" placeholder="Confirm password">
-                <!-- Password confirmation also typically does not use old() -->
             </div>
             @error('password_confirmation')
                 <div class="text-danger">{{ $message }}</div>
@@ -64,7 +59,6 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-calendar-fill"></i></span>
                 <input type="date" class="form-control" name="dob" id="birthDate" value="{{ old('dob') }}">
-                <!-- Added value="{{ old('dob') }}" to retain the old input value -->
             </div>
             @error('dob')
                 <div class="text-danger">{{ $message }}</div>
@@ -75,7 +69,6 @@
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-image-fill"></i></span>
                 <input type="file" class="form-control" name="profile_photo" id="profile_photo">
-                <!-- File inputs cannot retain old values due to browser security restrictions -->
             </div>
             @error('profile_photo')
                 <div class="text-danger">{{ $message }}</div>
@@ -90,5 +83,5 @@
 </div>
 @endsection
 @section('script')
-    {{-- <script src="{{ asset('JS/validation.js') }}"></script> --}}
+    <script src="{{ asset('JS/validation.js') }}"></script>
 @endsection
