@@ -90,10 +90,8 @@
                             <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" name="tearmsconditions"
                                     id="tearmsconditions">
-                                <label class="form-check-label" id="tc" for="tearmsconditions">
-                                    I accept <a class="text-decoration-none" href="{{ route('terms-conditions') }}">terms
-                                        &amp; conditions</a>
-                                </label>
+                                    <label for="tearmsconditions">I accept <a class="text-decoration-none" href="{{ route('terms-conditions') }}">terms
+                                        &amp; conditions</a>s</label>
                             </div>
                             <div class="mb-3 row">
                                 <div class="col-lg-6"></div>
